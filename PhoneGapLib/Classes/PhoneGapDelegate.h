@@ -63,8 +63,10 @@
 - (void)applicationWillTerminate:(UIApplication *)application;
 
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
++ (BOOL) openExternalURLsInSafari;
 + (NSString*) wwwFolderName;
 + (NSString*) pathForResource:(NSString*)resourcepath;
++ (NSURL*) applicationURL;
 + (NSString*) phoneGapVersion;
 + (NSString*) applicationDocumentsDirectory;
 + (NSString*) tmpFolderName;
