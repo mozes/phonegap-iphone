@@ -29,6 +29,10 @@
     return basePath;
 }
 
++ (BOOL) openExternalURLsInSafari
+{
+	return YES;
+}
 
 + (NSString*) wwwFolderName
 {
@@ -51,6 +55,11 @@
     return [mainBundle pathForResource:filename
 					   ofType:@""
                        inDirectory:directoryStr];
+}
+
++ (NSURL*) applicationURL
+{
+	return [NSURL fileURLWithPath:[[self class] pathForResource:[[self class] startPage]]];
 }
 
 /**
@@ -199,7 +208,7 @@ static NSString *gapVersion;
 	 * webView
 	 * This is where we define the inital instance of the browser (WebKit) and give it a starting url/file.
 	 */
-    NSURL *appURL        = [NSURL fileURLWithPath:[[self class] pathForResource:[[self class] startPage]]];
+    NSURL *appURL        = [[self class] applicationURL];
     NSURLRequest *appReq = [NSURLRequest requestWithURL:appURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
 	[webView loadRequest:appReq];
 
@@ -437,7 +446,7 @@ static NSString *gapVersion;
     /*
      * We don't have a PhoneGap or local file request, load it in the main Safari browser.
      */
-    else
+    else if([[self class] openExternalURLsInSafari])
     {
         //NSLog(@"Unknown URL %@", [url description]);
         [[UIApplication sharedApplication] openURL:url];

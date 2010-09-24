@@ -55,8 +55,10 @@
 - (NSDictionary*) deviceProperties;
 
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
++ (BOOL) openExternalURLsInSafari;
 + (NSString*) wwwFolderName;
 + (NSString*) pathForResource:(NSString*)resourcepath;
++ (NSURL*) applicationURL;
 + (NSString*) phoneGapVersion;
 + (NSString*) applicationDocumentsDirectory;
 
