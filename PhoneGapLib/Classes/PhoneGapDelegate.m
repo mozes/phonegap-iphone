@@ -174,7 +174,7 @@ static NSString *gapVersion;
 	
 	CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
 	self.window = [ [ [ UIWindow alloc ] initWithFrame:screenBounds ] autorelease ];
-	
+	screenBounds.size.height -= [[UIApplication sharedApplication] statusBarFrame].size.height;
 	webView = [ [ UIWebView alloc ] initWithFrame:screenBounds ];
     [webView setAutoresizingMask: (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight) ];
 	
