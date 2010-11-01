@@ -274,9 +274,11 @@ static NSString *gapVersion;
     } else if ([topActivityIndicator isEqualToString:@"gray"]) {
         topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
     }
-    activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle] retain];
+    activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite] retain];
     activityView.tag = 2;
-    [window addSubview:activityView];
+	CGRect rect = [imageView bounds];
+	activityView.frame = CGRectMake(rect.size.width/2-18.0f, rect.size.height*3/4, 37.0f, 37.0f);
+    [imageView addSubview:activityView];
     [activityView startAnimating];
 
 	[window makeKeyAndVisible];
