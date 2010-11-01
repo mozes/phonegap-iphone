@@ -246,9 +246,11 @@ static NSString *gapVersion;
     } else if ([topActivityIndicator isEqualToString:@"gray"]) {
         topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
     }
-    activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:topActivityIndicatorStyle] retain];
+    activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite] retain];
     activityView.tag = 2;
-    [window addSubview:activityView];
+	CGRect rect = [imageView bounds];
+	activityView.frame = CGRectMake(rect.size.width/2-18.0f, rect.size.height*3/4, 37.0f, 37.0f);
+    [imageView addSubview:activityView];
     [activityView startAnimating];
 
 	[window makeKeyAndVisible];
@@ -262,16 +264,7 @@ static NSString *gapVersion;
  */
 - (void)webViewDidStartLoad:(UIWebView *)theWebView 
 {
-	// Play any default movie
-	NSLog(@"Going to play default movie");
-	Movie* mov = (Movie*)[self getCommandInstance:@"Movie"];
-	NSMutableArray *args = [[[NSMutableArray alloc] init] autorelease];
-	[args addObject:@"default.mov"];
-	NSMutableDictionary* opts = [[[NSMutableDictionary alloc] init] autorelease];
-	[opts setObject:@"1" forKey:@"repeat"];
-	[mov play:args withDict:opts];
-
-    // Determine the URL used to invoke this application.
+	// Determine the URL used to invoke this application.
     // Described in http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
 
 	// This fires before the handleOpenURL fires, so the invokedURL is empty
