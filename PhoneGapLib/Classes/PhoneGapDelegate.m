@@ -250,12 +250,12 @@ static NSString *gapVersion;
 	 */
 	UIImage* image = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Default" ofType:@"png"]];
 	imageView = [[UIImageView alloc] initWithImage:image];
-	[imageView setFrame:window.bounds];
+	[imageView setFrame:screenBounds];
 	[imageView setContentMode:UIViewContentModeScaleAspectFill];
 	[image release];
 	
     imageView.tag = 1;
-	[window addSubview:imageView];
+	[viewController.view addSubview:imageView];
 	[imageView release];
 
 	/*
