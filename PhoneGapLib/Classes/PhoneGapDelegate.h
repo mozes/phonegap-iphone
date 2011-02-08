@@ -13,7 +13,8 @@
 
 #import "Location.h"
 #import "Sound.h"
-#import "Contacts.h"
+
+
 #import "DebugConsole.h"
 //#import "Image.h"
 
@@ -62,6 +63,7 @@
 - (NSDictionary*) deviceProperties;
 - (void)applicationWillTerminate:(UIApplication *)application;
 
+
 + (NSDictionary*)getBundlePlist:(NSString *)plistName;
 + (BOOL) openExternalURLsInSafari;
 + (NSString*) wwwFolderName;
@@ -70,5 +72,6 @@
 + (NSString*) phoneGapVersion;
 + (NSString*) applicationDocumentsDirectory;
 + (NSString*) tmpFolderName;
++ (NSString*) startPage;
 
 @end

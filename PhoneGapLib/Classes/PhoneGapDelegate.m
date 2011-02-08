@@ -11,6 +11,7 @@
 #import <UIKit/UIKit.h>
 #import "Movie.h"
 #import "InvokedUrlCommand.h"
+#import "Contact.h"
 
 @implementation PhoneGapDelegate
 
@@ -172,10 +173,15 @@ static NSString *gapVersion;
 	// Set the supported orientations for rotation. If number of items in the array is > 1, autorotate is supported
     viewController.supportedOrientations = supportedOrientations;
 	
+	
 	CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
 	self.window = [ [ [ UIWindow alloc ] initWithFrame:screenBounds ] autorelease ];
-	screenBounds.size.height -= [[UIApplication sharedApplication] statusBarFrame].size.height;
-	webView = [ [ UIWebView alloc ] initWithFrame:screenBounds ];
+
+
+	window.autoresizesSubviews = YES;
+	CGRect webViewBounds = [ [ UIScreen mainScreen ] applicationFrame ] ;
+	webViewBounds.origin = screenBounds.origin;
+	webView = [ [ UIWebView alloc ] initWithFrame:webViewBounds];
     [webView setAutoresizingMask: (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight) ];
 	
 	viewController.webView = webView;
@@ -188,19 +194,22 @@ static NSString *gapVersion;
 	if ([launchOptions objectForKey:[keyArray objectAtIndex:0]]!=nil) {
 		NSURL *url = [launchOptions objectForKey:[keyArray objectAtIndex:0]];
 		invokedURL = url;
-		NSLog(@"URL = %@", [invokedURL absoluteURL]);
-		// Determine the URL used to invoke this application.
-		// Described in http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
-		if ([[invokedURL scheme] isEqualToString:[self appURLScheme]]) {
-			InvokedUrlCommand* iuc = [[InvokedUrlCommand newFromUrl:invokedURL] autorelease];
+		if (invokedURL != nil && [invokedURL isKindOfClass:[NSURL class]]) 
+		{
+			NSLog(@"URL = %@", [invokedURL absoluteURL]);
+			// Determine the URL used to invoke this application.
+			// Described in http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
+			if ([[invokedURL scheme] isEqualToString:[self appURLScheme]]) {
+				InvokedUrlCommand* iuc = [[InvokedUrlCommand newFromUrl:invokedURL] autorelease];
 
-			NSLog(@"Arguments: %@", iuc.arguments);
+				NSLog(@"Arguments: %@", iuc.arguments);
 
-			NSString *optionsString = [[NSString alloc] initWithFormat:@"var Invoke_params=%@;", [iuc.options JSONFragment]];
+				NSString *optionsString = [[NSString alloc] initWithFormat:@"var Invoke_params=%@;", [iuc.options JSONFragment]];
 
-			[webView stringByEvaluatingJavaScriptFromString:optionsString];
+				[webView stringByEvaluatingJavaScriptFromString:optionsString];
 
-			[optionsString release];
+				[optionsString release];
+			}
 		}
 	}
 	
@@ -222,7 +231,8 @@ static NSString *gapVersion;
 	if ([fileMgr createDirectoryAtPath:tmpDirectory withIntermediateDirectories: NO attributes: nil error: nil] == NO)
 	{
 		// might have failed because it already exists
-		if ( [fileMgr fileExistsAtPath:tmpDirectory] == NO ){
+		if ( [fileMgr fileExistsAtPath:tmpDirectory] == NO )
+		{
 			NSLog(@"Unable to create tmp directory");  // not much we can do it this fails
 		}
 	}
@@ -458,20 +468,22 @@ static NSString *gapVersion;
 	}
     
     /*
-     * If a URL is being loaded that's a local file URL, just load it internally
+     * If a URL is being loaded that's a file/http/https URL, just load it internally
      */
-    else if ([url isFileURL])
+    else if ([url isFileURL] || 
+			 [[url scheme] isEqualToString:@"http"] || 
+			 [[url scheme] isEqualToString:@"https"])
     {
-        //NSLog(@"File URL %@", [url description]);
         return YES;
     }
     
     /*
-     * We don't have a PhoneGap or local file request, load it in the main Safari browser.
+     * We don't have a PhoneGap or web/local request, load it in the main Safari browser.
+	 * pass this to the application to handle.  Could be a mailto:dude@duderanch.com or a tel:55555555 or sms:55555555 facetime:55555555
      */
     else if([[self class] openExternalURLsInSafari])
     {
-        //NSLog(@"Unknown URL %@", [url description]);
+        NSLog(@"PhoneGapDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
         [[UIApplication sharedApplication] openURL:url];
         return NO;
 	}
@@ -513,6 +525,9 @@ static NSString *gapVersion;
 	if (![fileMgr removeItemAtPath: tmpPath error: &err]){
 		NSLog(@"Error removing tmp directory: %@", [err localizedDescription]); // could error because was already deleted
 	}
+	[fileMgr release];
+	// clean up any Contact objects
+	[[Contact class] releaseDefaults];
 }
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url

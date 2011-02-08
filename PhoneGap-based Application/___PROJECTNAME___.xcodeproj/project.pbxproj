@@ -329,7 +329,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "make -C \"${PHONEGAPLIB}\"\necho cp ${PHONEGAPLIB}/javascripts/phonegap.js ${PROJECT_DIR}/www/phonegap.js\ncp \"${PHONEGAPLIB}/javascripts/phonegap.js\" \"${PROJECT_DIR}/www/phonegap.js\"";
+			shellScript = "# get the PhoneGapLib version\nexport pgver=`head -1 ${PHONEGAPLIB}/VERSION`\n\n# compile and copy PhoneGapLib\nmake -C \"${PHONEGAPLIB}\"\necho cp ${PHONEGAPLIB}/javascripts/phonegap.*.js ${PROJECT_DIR}/www\ncp ${PHONEGAPLIB}/javascripts/phonegap.*.js ${PROJECT_DIR}/www\n\n# replace [src=\"phonegap.js\"] in all files in www\nfind ${PROJECT_DIR}/www | xargs grep 'src[ \t]*=[ \t]*[\\\\'\\\"]phonegap.*.*.js[\\\\'\\\"]' -sl | xargs -L1 sed -i \"\" \"s/src[ \t]*=[ \t]*[\\\\'\\\"]phonegap.*.*.js[\\\\'\\\"]/src=\\\"phonegap.${pgver}.min.js\\\"/g\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -395,7 +395,7 @@
 					"-Obj-C",
 				);
 				PREBINDING = NO;
-				SDKROOT = iphoneos4.1;
+				SDKROOT = iphoneos;
 				USER_HEADER_SEARCH_PATHS = "$(PHONEGAPLIB)/Classes/JSON $(PHONEGAPLIB)/Classes";
 			};
 			name = Debug;
@@ -415,7 +415,7 @@
 					"-Obj-C",
 				);
 				PREBINDING = NO;
-				SDKROOT = iphoneos4.1;
+				SDKROOT = iphoneos;
 				USER_HEADER_SEARCH_PATHS = "$(PHONEGAPLIB)/Classes/JSON $(PHONEGAPLIB)/Classes";
 			};
 			name = Release;

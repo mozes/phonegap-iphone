@@ -82,6 +82,7 @@ PhoneGap.addConstructor = function(func) {
  * recieve them.
  * @param {String} command Command to be run in PhoneGap, e.g. "ClassName.method"
  * @param {String[]} [args] Zero or more arguments to pass to the method
+ * object paramters are passed as an array object [object1, object2] each object will be passed as JSON strings
  */
 PhoneGap.exec = function() {
     PhoneGap.queue.commands.push(arguments);
@@ -91,9 +92,9 @@ PhoneGap.exec = function() {
 
 /**
  * Internal function used to dispatch the request to PhoneGap.  It processes the
- * command queue and executes the next command on the list.  If one of the
- * arguments is a JavaScript object, it will be passed on the QueryString of the
- * url, which will be turned into a dictionary on the other end.
+ * command queue and executes the next command on the list.  Simple parameters are passed
+ * as arguments on the url.  JavaScript objects converted into a JSON string and passed as a
+ * query string argument of the url.  
  * @private
  */
 PhoneGap.run_command = function() {
@@ -113,7 +114,7 @@ PhoneGap.run_command = function() {
     for (var i = 1; i < args.length; i++) {
         var arg = args[i];
         if (arg == undefined || arg == null)
-            arg = '';
+            continue;
         if (typeof(arg) == 'object')
             dict = arg;
         else
@@ -121,15 +122,47 @@ PhoneGap.run_command = function() {
     }
     var url = "gap://" + args[0] + "/" + uri.join("/");
     if (dict != null) {
-        var query_args = [];
-        for (var name in dict) {
-            if (typeof(name) != 'string')
-                continue;
-            query_args.push(encodeURIComponent(name) + "=" + encodeURIComponent(dict[name]));
-        }
-        if (query_args.length > 0)
-            url += "?" + query_args.join("&");
+        url += "?" + encodeURIComponent(JSON.stringify(dict));
     }
     document.location = url;
 
+};
+/**
+ * Does a deep clone of the object.
+ *
+ * @param obj
+ * @return
+ */
+PhoneGap.clone = function(obj) {
+	if(!obj) { 
+		return obj;
+	}
+
+	if(obj instanceof Array){
+		var retVal = new Array();
+		for(var i = 0; i < obj.length; ++i){
+			retVal.push(PhoneGap.clone(obj[i]));
+		}
+		return retVal;
+	}
+
+	if (obj instanceof Function) {
+		return obj;
+	}
+
+	if(!(obj instanceof Object)){
+		return obj;
+	}
+	
+	if (obj instanceof Date) {
+		return obj;
+	}
+
+	retVal = new Object();
+	for(i in obj){
+		if(!(i in retVal) || retVal[i] != obj[i]) {
+			retVal[i] = PhoneGap.clone(obj[i]);
+		}
+	}
+	return retVal;
 };
