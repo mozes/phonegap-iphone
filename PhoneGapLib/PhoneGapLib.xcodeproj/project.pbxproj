@@ -445,6 +445,7 @@
 				GCC_PREFIX_HEADER = PhoneGapLib_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = PhoneGapLib;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -459,6 +460,7 @@
 				GCC_PREFIX_HEADER = PhoneGapLib_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = PhoneGapLib;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
