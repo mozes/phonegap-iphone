@@ -7,3 +7,4 @@ docs
 PhoneGapLibInstaller.pkg
 
 /PhoneGapLib/javascripts/phonegap-uncompressed.js
+PhoneGapLib/PhoneGapLib.xcodeproj/xcuserdata/*
